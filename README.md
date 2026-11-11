@@ -185,7 +185,7 @@ A [decisão arquitetural](docs/architecture/adr-0001.md) propõe validar as font
 ## Estrutura
 
 ```text
-aps3-nome-sobrenome/
+aps3/
 ├── README.md
 └── docs/
     ├── architecture/
@@ -196,5 +196,3 @@ aps3-nome-sobrenome/
         ├── atividades.mmd
         └── estados.mmd
 ```
-
-**Observações:** a verificação de fonte não equivale a parecer jurídico. A infraestrutura (React, FastAPI, PostgreSQL e RabbitMQ) é ilustrativa e deve ser confirmada com a equipe. Para visualizar os diagramas, use GitHub ou um editor compatível com Mermaid, incluindo C4.
