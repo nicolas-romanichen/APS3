@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor U as Exportador
+    participant API as ConsultaController
+    participant S as OrientacaoService
+    participant R as RegraRepository
+    participant V as ValidacaoNormativaService
+    participant F as FonteRepository
+    participant IA as ModeloIAAdapter
+    participant Q as FilaAtualizacao
+
+    U->>API: consultar(ConsultaDTO)
+    API->>S: gerarOrientacao(ConsultaDTO)
+    S->>R: buscarAplicaveis(OperacaoDTO)
+    R-->>S: ListaRegraDTO
+
+    loop Para cada RegraDTO
+        S->>V: validarRegra(RegraDTO)
+        V->>F: buscarFontes(regraId)
+        F-->>V: ListaFonteDTO
+        V-->>S: ValidacaoDTO
+        opt Fonte exige revisao
+            V-)Q: publicar(AtualizacaoSolicitadaDTO)
+        end
+    end
+
+    alt Dados insuficientes ou fontes nao verificadas
+        S-->>API: OrientacaoDTO com incerteza e pendencias
+    else Contexto e fontes verificados
+        S->>IA: gerarTexto(ContextoFundamentadoDTO)
+        IA-->>S: TextoGeradoDTO
+        S-->>API: OrientacaoDTO com citacoes
+    end
+    API-->>U: OrientacaoDTO

@@ -1,0 +1,39 @@
+flowchart TB
+    subgraph U[RAIA 1 - EXPORTADOR]
+        direction LR
+        inicio([Inicio]) --> consulta[Informar consulta]
+        exibir[Visualizar resposta] --> fim([Fim])
+    end
+
+    subgraph B[RAIA 2 - BACKEND]
+        direction TB
+        interpretar[Interpretar consulta e buscar regras]
+        dados{Dados suficientes?}
+        solicitar[Solicitar dados faltantes]
+        fork["━━━━ FORK ━━━━"]
+        join["━━━━ JOIN ━━━━"]
+        fontes{Fontes verificadas?}
+        responder[Gerar resposta com citacoes]
+        incerto[Gerar resposta com incerteza]
+        enviar[Enviar OrientacaoDTO]
+    end
+
+    subgraph N[RAIA 3 - VALIDACAO NORMATIVA]
+        direction LR
+        origem[Conferir origem oficial]
+        vigencia[Conferir vigencia]
+        pendencia[Registrar pendencia de revisao]
+    end
+
+    consulta --> interpretar --> dados
+    dados -->|"[nao]"| solicitar --> enviar
+    dados -->|"[sim]"| fork
+    fork --> origem --> join
+    fork --> vigencia --> join
+    join --> fontes
+    fontes -->|"[sim]"| responder --> enviar
+    fontes -->|"[nao]"| incerto --> pendencia --> enviar
+    enviar --> exibir
+
+    classDef barra fill:#333,stroke:#333,color:#fff
+    class fork,join barra
