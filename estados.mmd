@@ -1,0 +1,29 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Cadastrada
+    Cadastrada --> Verificacao: iniciarValidacao / conferirMetadados
+
+    state Verificacao {
+        direction TB
+        [*] --> Origem
+        Origem --> Vigencia: origemConfirmada [urlOficialValida]
+        Origem --> Revisao: origemNaoConfirmada [urlOficialInvalida]
+        Vigencia --> Concluida: vigenciaConfirmada [normaVigente]
+        Vigencia --> Revisao: vigenciaNaoConfirmada [normaNaoConfirmada]
+        Revisao --> Origem: novaEvidencia / revalidar
+        Concluida --> [*]
+    }
+
+    Verificacao --> Verificada: validacaoAprovada / registrarEvidencias
+    Verificacao --> Pendente: validacaoInconclusiva / sinalizarIncerteza
+    Pendente --> Verificacao: novaEvidencia / reiniciarValidacao
+    Verificada --> Desatualizada: mudancaDetectada / suspenderCitacao
+    Desatualizada --> Verificacao: iniciarRevisao / consultarVersao
+    Verificada --> Arquivada: revogacaoConfirmada / preservarHistorico
+    Desatualizada --> Arquivada: revogacaoConfirmada / preservarHistorico
+    Pendente --> Arquivada: descarteJustificado / registrarMotivo
+    Arquivada --> [*]
+
+    Verificada: entry / registrarDataValidacao
+    Verificada: do / disponibilizarParaCitacao
+    Verificada: exit / registrarMotivoSaida
